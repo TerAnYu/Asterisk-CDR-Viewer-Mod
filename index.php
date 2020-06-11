@@ -193,6 +193,49 @@ if ( strlen($lastapp) > 0 ) {
 	}
 }
 
+if ( isset($_REQUEST['peerip_neg']) && $_REQUEST['peerip_neg'] == 'true' ) {
+	$peerip = (empty($_REQUEST['peerip']) || $_REQUEST['peerip'] == 'all') ? null : "peerip != '$_REQUEST[peerip]'";
+} else {
+	$peerip = (empty($_REQUEST['peerip']) || $_REQUEST['peerip'] == 'all') ? null : "peerip = '$_REQUEST[peerip]'";
+}
+
+if ( strlen($peerip) > 0 ) {
+	if ( strlen($where) > 8 ) {
+		$where = "$where $search_condition $peerip";
+	} else {
+		$where = "$where $peerip";
+	}
+}
+
+if ( isset($_REQUEST['recvip_neg']) && $_REQUEST['recvip_neg'] == 'true' ) {
+	$recvip = (empty($_REQUEST['recvip']) || $_REQUEST['recvip'] == 'all') ? null : "recvip != '$_REQUEST[recvip]'";
+} else {
+	$recvip = (empty($_REQUEST['recvip']) || $_REQUEST['recvip'] == 'all') ? null : "recvip = '$_REQUEST[recvip]'";
+}
+
+if ( strlen($recvip) > 0 ) {
+	if ( strlen($where) > 8 ) {
+		$where = "$where $search_condition $recvip";
+	} else {
+		$where = "$where $recvip";
+	}
+}
+
+if ( isset($_REQUEST['useragent_neg']) && $_REQUEST['useragent_neg'] == 'true' ) {
+	$useragent = (empty($_REQUEST['useragent']) || $_REQUEST['useragent'] == 'all') ? null : "useragent != '$_REQUEST[useragent]'";
+} else {
+	$useragent = (empty($_REQUEST['useragent']) || $_REQUEST['useragent'] == 'all') ? null : "useragent = '$_REQUEST[useragent]'";
+}
+
+if ( strlen($useragent) > 0 ) {
+	if ( strlen($where) > 8 ) {
+		$where = "$where $search_condition $useragent";
+	} else {
+		$where = "$where $useragent";
+	}
+}
+
+
 $duration = !isset($_REQUEST['dur_min']) || is_blank($_REQUEST['dur_max']) ? null : "duration BETWEEN '$_REQUEST[dur_min]' AND '$_REQUEST[dur_max]'";
 
 if ( strlen($duration) > 0 ) {
@@ -258,6 +301,9 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 				'channel',
 				'dstchannel',
 				'lastapp',
+				'peerip',
+				'recvip',
+				'useragent',
 				'lastdata',
 				'duration',
 				'billsec',
@@ -287,22 +333,25 @@ if ( isset($_REQUEST['need_csv']) && $_REQUEST['need_csv'] == 'true' ) {
 			$csv_line[6]	= $row['channel'];
 			$csv_line[7] 	= $row['dstchannel'];
 			$csv_line[8] 	= $row['lastapp'];
-			$csv_line[9]	= $row['lastdata'];
-			$csv_line[10]	= $row['duration'];
-			$csv_line[11]	= $row['billsec'];
-			$csv_line[12]	= $row['disposition'];
-			$csv_line[13]	= $row['amaflags'];
-			$csv_line[14]	= $row['accountcode'];
-			$csv_line[15]	= isset($row['peeraccount']) ? $row['peeraccount'] : '';
-			$csv_line[16]	= $row['uniqueid'];
-			$csv_line[17]	= $row['userfield'];
-			$csv_line[18]	= isset($row['linkedid']) ? $row['linkedid'] : '';
-			$csv_line[19]	= isset($row['sequence']) ? $row['sequence'] : '';
+			$csv_line[9] 	= $row['peerip'];
+			$csv_line[10] 	= $row['recvip'];
+			$csv_line[11] 	= $row['useragent'];
+			$csv_line[12]	= $row['lastdata'];
+			$csv_line[13]	= $row['duration'];
+			$csv_line[14]	= $row['billsec'];
+			$csv_line[15]	= $row['disposition'];
+			$csv_line[16]	= $row['amaflags'];
+			$csv_line[17]	= $row['accountcode'];
+			$csv_line[18]	= isset($row['peeraccount']) ? $row['peeraccount'] : '';
+			$csv_line[19]	= $row['uniqueid'];
+			$csv_line[20]	= $row['userfield'];
+			$csv_line[21]	= isset($row['linkedid']) ? $row['linkedid'] : '';
+			$csv_line[22]	= isset($row['sequence']) ? $row['sequence'] : '';
 			$data = '';
 			if ( $use_callrates === true ) {
 				$rates = callrates( $row['dst'],$row['billsec'],Config::get('callrate.csv_file') );
-				$csv_line[20] = $rates[4];
-				$csv_line[21] = $rates[2];
+				$csv_line[23] = $rates[4];
+				$csv_line[24] = $rates[2];
 			}
 			for ($i = 0; $i < count($csv_line); $i++) {
 				$csv_line[$i] = str_replace( array( "\n", "\r" ), '', $csv_line[$i]);
@@ -418,6 +467,19 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 						if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
 							echo '<th rowspan="2" class="record_col">Приложение</th>';
 						}
+						
+						if ( Config::get('display.column.peerip') == 1
+							|| Config::get('display.column.recvip') == 1
+							|| Config::get('display.column.useragent') == 1
+						) {
+							$colspan_network = array_sum(array(
+								Config::get('display.column.peerip'),
+								Config::get('display.column.recvip'),
+								Config::get('display.column.useragent'),
+							));
+							echo '<th colspan="'.$colspan_network.'" class="record_col">Сетевые</th>';
+						}	
+						
 						if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
 							echo '<th rowspan="2" class="record_col">Вх. канал</th>';
 						}
@@ -448,6 +510,15 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 						}
 						if ( Config::exists('display.column.duration') && Config::get('display.column.duration') == 1 ) {
 							echo '<th class="record_col">полная</th>';
+						}
+						if ( Config::exists('display.column.peerip') && Config::get('display.column.peerip') == 1 ) {
+							echo '<th class="record_col">peerip</th>';
+						}
+						if ( Config::exists('display.column.recvip') && Config::get('display.column.recvip') == 1 ) {
+							echo '<th class="record_col">recvip</th>';
+						}
+						if ( Config::exists('display.column.useragent') && Config::get('display.column.useragent') == 1 ) {
+							echo '<th class="record_col">useragent</th>';
 						}						
 						?>
 					</tr>
@@ -488,6 +559,15 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				}
 				if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
 					formatApp($row['lastapp'], $row['lastdata']);
+				}
+				if ( Config::exists('display.column.peerip') && Config::get('display.column.peerip') == 1 ) {
+					formatpeerip($row['peerip'], $row['peerip']);
+				}
+				if ( Config::exists('display.column.recvip') && Config::get('display.column.recvip') == 1 ) {
+					formatrecvip($row['recvip'], $row['recvip']);
+				}
+				if ( Config::exists('display.column.useragent') && Config::get('display.column.useragent') == 1 ) {
+					formatuseragent($row['useragent'], $row['useragent']);
 				}
 				if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
 					formatChannel($row['channel']);
@@ -706,7 +786,7 @@ if ( isset($_REQUEST['need_minutes_report']) && $_REQUEST['need_minutes_report']
 
 if ( isset($_REQUEST['need_chart_cc']) && $_REQUEST['need_chart_cc'] == 'true' ) {
 	$date_range = "( (calldate BETWEEN $startdate AND $enddate) or (calldate + interval duration second  BETWEEN $startdate AND $enddate) or ( calldate + interval duration second >= $enddate AND calldate <= $startdate ) )";
-	$where = "$channel $src $clid $dst $dstchannel $dst $userfield $accountcode $disposition $lastapp $duration $cdr_user_name";
+	$where = "$channel $src $clid $dst $dstchannel $dst $userfield $accountcode $disposition $lastapp $peerip $recvip $useragent $duration $cdr_user_name";
 	
 	if ( strlen(trim($where)) > 1 ) {
 		$where = "WHERE $date_range AND ( $where )";

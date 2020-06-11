@@ -398,6 +398,56 @@ foreach ($months as $i => $month) {
 </tr>
 <?php } ?>
 
+<?php if ( Config::get('display.search.peerip') == (1||2) ) { ?>
+<tr class="<?php if ( Config::get('display.search.peerip') == 2 ) { echo 'spoilers'; } ?>">
+	<td>
+		<input type="radio" id="id_order_peerip" name="order" value="peerip">&nbsp;<label for="id_order_peerip">peerip</label>
+	</td>
+	<td>
+		<input class="margin-left0" type="text" name="peerip" id="peerip">
+		<input type="checkbox" name="peerip_neg" value="true" id="id_peerip_neg"> <label for="id_peerip_neg">Не</label> &ensp;
+		<input checked="checked" type="radio" name="peerip_mod" value="begins_with" id="id_peerip_mod1"> <label for="id_peerip_mod1">Начинается с</label> &ensp;
+		<input type="radio" name="peerip_mod" value="contains" id="id_peerip_mod2"> <label for="id_peerip_mod2">Содержит</label> &ensp; 
+		<input type="radio" name="peerip_mod" value="ends_with" id="id_peerip_mod3"> <label for="id_peerip_mod3">Заканчивается на</label> &ensp;
+		<input type="radio" name="peerip_mod" value="exact" id="id_peerip_mod4"> <label for="id_peerip_mod4">Равно</label> 
+	</td>
+</tr>
+<?php } ?>
+
+<?php if ( Config::get('display.search.recvip') == (1||2) ) { ?>
+<tr class="<?php if ( Config::get('display.search.recvip') == 2 ) { echo 'spoilers'; } ?>">
+	<td>
+		<input type="radio" id="id_order_recvip" name="order" value="recvip">&nbsp;<label for="id_order_recvip">recvip</label>
+	</td>
+	<td>
+		<input class="margin-left0" type="text" name="recvip" id="recvip">
+		<input type="checkbox" name="recvip_neg" value="true" id="id_recvip_neg"> <label for="id_recvip_neg">Не</label> &ensp;
+		<input checked="checked" type="radio" name="recvip_mod" value="begins_with" id="id_recvip_mod1"> <label for="id_recvip_mod1">Начинается с</label> &ensp;
+		<input type="radio" name="recvip_mod" value="contains" id="id_recvip_mod2"> <label for="id_recvip_mod2">Содержит</label> &ensp; 
+		<input type="radio" name="recvip_mod" value="ends_with" id="id_recvip_mod3"> <label for="id_recvip_mod3">Заканчивается на</label> &ensp;
+		<input type="radio" name="recvip_mod" value="exact" id="id_recvip_mod4"> <label for="id_recvip_mod4">Равно</label> 
+	</td>
+</tr>
+<?php } ?>
+
+<?php if ( Config::get('display.search.useragent') == (1||2) ) { ?>
+<tr class="<?php if ( Config::get('display.search.useragent') == 2 ) { echo 'spoilers'; } ?>">
+	<td>
+		<input type="radio" id="id_order_useragent" name="order" value="useragent">&nbsp;<label for="id_order_useragent">useragent</label>
+	</td>
+	<td>
+		<input class="margin-left0" type="text" name="useragent" id="useragent">
+		<input type="checkbox" name="useragent_neg" value="true" id="id_useragent_neg"> <label for="id_useragent_neg">Не</label> &ensp;
+		<input checked="checked" type="radio" name="useragent_mod" value="begins_with" id="id_useragent_mod1"> <label for="id_useragent_mod1">Начинается с</label> &ensp;
+		<input type="radio" name="useragent_mod" value="contains" id="id_useragent_mod2"> <label for="id_useragent_mod2">Содержит</label> &ensp; 
+		<input type="radio" name="useragent_mod" value="ends_with" id="id_useragent_mod3"> <label for="id_useragent_mod3">Заканчивается на</label> &ensp;
+		<input type="radio" name="useragent_mod" value="exact" id="id_useragent_mod4"> <label for="id_useragent_mod4">Равно</label> 
+	</td>
+</tr>
+<?php } ?>
+
+
+
 <?php if ( Config::get('display.search.disposition') == (1||2) ) { ?>
 <tr class="<?php if ( Config::get('display.search.disposition') == 2 ) { echo 'spoilers'; } ?>">
 	<td><input type="radio" id="id_order_disposition" name="order" value="disposition">&nbsp;<label for="id_order_disposition">Статус звонка</label></td>

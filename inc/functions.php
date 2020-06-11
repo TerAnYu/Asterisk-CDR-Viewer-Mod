@@ -333,6 +333,16 @@ function formatUserField($userfield) {
 	echo '<td class="record_col userfield">'.$userfield.'</td>' . PHP_EOL;
 }
 
+function formatpeerip($peerip) {
+	echo '<td class="record_col peerip">'.$peerip.'</td>' . PHP_EOL;
+}
+function formatrecvip($recvip) {
+	echo '<td class="record_col recvip">'.$recvip.'</td>' . PHP_EOL;
+}
+function formatuseragent($useragent) {
+	echo '<td class="record_col useragent">'.$useragent.'</td>' . PHP_EOL;
+}
+
 function formatAccountCode($accountcode) {
 	echo '<td class="record_col"><abbr data-clipboard data-clipboard-text="'.$accountcode.'">'.$accountcode.'</abbr></td>' . PHP_EOL;
 }
