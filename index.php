@@ -441,8 +441,20 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 						<th rowspan="2" class="record_col">Кто звонил</th>
 						<th rowspan="2" class="record_col">Куда звонили</th>
 						<?php
+						if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
+							echo '<th rowspan="2" class="record_col">CallerID</th>';
+						}
 						if ( Config::exists('display.column.did') && Config::get('display.column.did') == 1 ) {
 							echo '<th rowspan="2" class="record_col">DID</th>';
+						}
+						if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Вх. канал</th>';
+						}
+						if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Исх. канал</th>';
+						}
+						if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
+							echo '<th rowspan="2" class="record_col">Приложение</th>';
 						}
 						if ( Config::get('display.column.durwait') == 1
 							|| Config::get('display.column.billsec') == 1
@@ -464,10 +476,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 								echo '<th rowspan="2" class="record_col">Направление</th>';
 							}
 						}
-						if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
-							echo '<th rowspan="2" class="record_col">Приложение</th>';
-						}
-						
 						if ( Config::get('display.column.peerip') == 1
 							|| Config::get('display.column.recvip') == 1
 							|| Config::get('display.column.useragent') == 1
@@ -479,16 +487,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 							));
 							echo '<th colspan="'.$colspan_network.'" class="record_col">Сетевые</th>';
 						}	
-						
-						if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
-							echo '<th rowspan="2" class="record_col">Вх. канал</th>';
-						}
-						if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
-							echo '<th rowspan="2" class="record_col">CallerID</th>';
-						}
-						if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
-							echo '<th rowspan="2" class="record_col">Исх. канал</th>';
-						}
 						if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
 							echo '<th rowspan="2" class="record_col">Запись</th>';
 						}
@@ -532,12 +530,24 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				formatDisposition($row['disposition'], $row['amaflags']);
 				formatSrc($row['src'],$row['clid']);
 				formatDst($row['dst'], $row['dcontext'] );
+				if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
+					formatClid($row['clid']);
+				}
 				if ( Config::exists('display.column.did') && Config::get('display.column.did') == 1 ) {
 					if ( isset($row['did']) && strlen($row['did']) ) {
 						formatDst($row['did'], $row['dcontext'] . ' # ' . $row['dst']);
 					} else {
 						formatDst('', $row['dcontext']);
 					}					
+				}
+				if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
+					formatChannel($row['channel']);
+				}
+				if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
+					formatChannel($row['dstchannel']);
+				}
+				if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
+					formatApp($row['lastapp'], $row['lastdata']);
 				}
 				if ( Config::exists('display.column.durwait') && Config::get('display.column.durwait') == 1 ) {
 					formatDurWait($row['duration'], $row['billsec']);
@@ -557,9 +567,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 						echo '<td>'. htmlspecialchars($rates[2]) . '</td>';
 					}
 				}
-				if ( Config::exists('display.column.lastapp') && Config::get('display.column.lastapp') == 1 ) {
-					formatApp($row['lastapp'], $row['lastdata']);
-				}
 				if ( Config::exists('display.column.peerip') && Config::get('display.column.peerip') == 1 ) {
 					formatpeerip($row['peerip'], $row['peerip']);
 				}
@@ -568,15 +575,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				}
 				if ( Config::exists('display.column.useragent') && Config::get('display.column.useragent') == 1 ) {
 					formatuseragent($row['useragent'], $row['useragent']);
-				}
-				if ( Config::exists('display.column.channel') && Config::get('display.column.channel') == 1 ) {
-					formatChannel($row['channel']);
-				}
-				if ( Config::exists('display.column.clid') && Config::get('display.column.clid') == 1 ) {
-					formatClid($row['clid']);
-				}
-				if ( Config::exists('display.column.dstchannel') && Config::get('display.column.dstchannel') == 1 ) {
-					formatChannel($row['dstchannel']);
 				}
 				if ( Config::exists('display.column.file') && Config::get('display.column.file') == 1 ) {
 					formatFiles($row, $file_params);
@@ -589,7 +587,6 @@ if ( isset($_REQUEST['need_html']) && $_REQUEST['need_html'] == 'true' ) {
 				}
 				echo '</tr>';
 			}
-			
 		}
 		catch (PDOException $e) {
 			print $e->getMessage();
