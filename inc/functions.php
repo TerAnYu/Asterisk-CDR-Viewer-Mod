@@ -263,6 +263,14 @@ function formatDisposition($disposition, $amaflags) {
 			$dispTxt = 'Перегрузка';
 			$style = 'congestion';
 			break;
+		case 'CHANUNAVAIL':
+			$dispTxt = 'Канал недоступен';
+			$style = 'noanswer';
+			break;
+		case 'CANCEL':
+			$dispTxt = 'Вызов отменен ';
+			$style = 'failed';
+			break;
 		// FreeSWITCH
 		case 'NORMAL_CLEARING':
 			$dispTxt = 'Отвечено FS';

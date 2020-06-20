@@ -143,21 +143,21 @@ context internal {
 ; MixMonitor
 [recording]
 exten => s,1,GoToIf($["${RECORDING}" = "1"]?mp3)
-exten => s,n,GoToIf($["${RECORDING}" = "2"]?wav:no)
-exten => s,n(mp3),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
-exten => s,n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
-exten => s,n,Set(CDR(filename)=${fname}.mp3);
-exten => s,n,Set(CDR(realdst)=${ARG2});
-exten => s,n,Set(CDR(remoteip)=${CHANNEL(recvip)});
-exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
-exten => s,n,Goto(no);
-exten => s,n(wav),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
-exten => s,n,Set(CDR(filename)=${fname}.wav);
-exten => s,n,Set(CDR(realdst)=${ARG2});
-exten => s,n,Set(CDR(remoteip)=${CHANNEL(recvip)});
-exten => s,n,MixMonitor(${DIR_RECORDS}${fname}.wav,b);
-exten => s,n,Goto(no);
-exten => s,n(no),Verbose(Exit record);
+	same => n,GoToIf($["${RECORDING}" = "2"]?wav:no)
+	same => n(mp3),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
+	same => n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
+	same => n,Set(CDR(filename)=${fname}.mp3);
+	same => n,Set(CDR(realdst)=${ARG2});
+	same => n,Set(CDR(remoteip)=${CHANNEL(recvip)});
+	same => n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
+	same => n,Goto(no);
+	same => n(wav),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
+	same => n,Set(CDR(filename)=${fname}.wav);
+	same => n,Set(CDR(realdst)=${ARG2});
+	same => n,Set(CDR(remoteip)=${CHANNEL(recvip)});
+	same => n,MixMonitor(${DIR_RECORDS}${fname}.wav,b);
+	same => n,Goto(no);
+	same => n(no),Verbose(Exit record);
 ```
 
 #### Пример вызова макроса:
@@ -165,8 +165,8 @@ exten => s,n(no),Verbose(Exit record);
 ```
 [internal]
 exten => _X.,1,GoSub(recording,s,1(${CALLERID(num)},${EXTEN}))
-exten => _X.,n,Dial(SIP/${EXTEN},60)
-exten => _X.,n,Hangup()
+	same => n,Dial(SIP/${EXTEN},60)
+	same => n,Hangup()
 ```
 
 ### Дополнительно (необязательно). Если НЕ использовали файл импорта в базу "cdr_mysql.sql"
@@ -199,7 +199,7 @@ Set(CDR(realdst)=${number});
 ### Для extensions.conf
 
 ```
-exten => s,n,Set(CDR(realdst)=${ARG1});
+	same =>n,Set(CDR(realdst)=${ARG1});
 ```
 
 ## Настройка папки со звонками
