@@ -142,22 +142,27 @@ context internal {
 ```
 ; MixMonitor
 [recording]
-exten => s,1,GoToIf($["${RECORDING}" = "1"]?mp3)
+exten => s,1,noop()
+	same => n,GoToIf($["${RECORDING}" = "1"]?mp3)
 	same => n,GoToIf($["${RECORDING}" = "2"]?wav:no)
-	same => n(mp3),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
-	same => n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3");
-	same => n,Set(CDR(filename)=${fname}.mp3);
-	same => n,Set(CDR(realdst)=${ARG2});
-	same => n,Set(CDR(remoteip)=${CHANNEL(recvip)});
-	same => n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt});
-	same => n,Goto(no);
-	same => n(wav),Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2});
-	same => n,Set(CDR(filename)=${fname}.wav);
-	same => n,Set(CDR(realdst)=${ARG2});
-	same => n,Set(CDR(remoteip)=${CHANNEL(recvip)});
-	same => n,MixMonitor(${DIR_RECORDS}${fname}.wav,b);
-	same => n,Goto(no);
-	same => n(no),Verbose(Exit record);
+	same => n(mp3),noop()
+	same => n,Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2})
+	same => n,Set(monopt=nice -n 19 /usr/bin/lame -b 32  --silent "${DIR_RECORDS}${fname}.wav"  "${DIR_RECORDS}${fname}.mp3" && rm -f "${DIR_RECORDS}${fname}.wav" && chmod o+r "${DIR_RECORDS}${fname}.mp3")
+	same => n,Set(CDR(filename)=${fname}.mp3)
+	same => n,Set(CDR(realdst)=${ARG2})
+	same => n,Set(CDR(remoteip)=${CHANNEL(recvip)})
+	same => n,MixMonitor(${DIR_RECORDS}${fname}.wav,b,${monopt})
+	same => n,Goto(no)
+	same => n(wav),noop()
+	same => n,Set(fname=${UNIQUEID}-${STRFTIME(${EPOCH},,%Y-%m-%d-%H_%M)}-${ARG1}-${ARG2})
+	same => n,Set(CDR(filename)=${fname}.wav)
+	same => n,Set(CDR(realdst)=${ARG2})
+	same => n,Set(CDR(remoteip)=${CHANNEL(recvip)})
+	same => n,MixMonitor(${DIR_RECORDS}${fname}.wav,b)
+	same => n,Goto(no)
+	same => n(no),noop()
+	same => n,Verbose(Exit record)
+	same => n,Return()
 ```
 
 #### Пример вызова макроса:
